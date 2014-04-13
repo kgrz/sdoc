@@ -59,4 +59,7 @@ describe RDoc::Generator::SDoc do
     @options.search_index.must_equal false
   end
 
+  it "should generate gzipped search index file" do
+    @options.search_index_gzipped.must_equal true
+  end
 end

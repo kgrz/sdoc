@@ -23,6 +23,7 @@ end
 class RDoc::Options
   attr_accessor :github
   attr_accessor :search_index
+  attr_accessor :search_index_gzipped
 end
 
 class RDoc::AnyMethod
@@ -128,6 +129,7 @@ class RDoc::Generator::SDoc
   def self.setup_options(options)
     @github = false
     options.search_index = true
+    options.search_index_gzipped = true
 
     opt = options.option_parser
     opt.separator nil
@@ -150,7 +152,6 @@ class RDoc::Generator::SDoc
       options.search_index = false
     end
     opt.separator nil
-
   end
 
   def initialize(store, options)
@@ -181,6 +182,7 @@ class RDoc::Generator::SDoc
     generate_class_files
     generate_index_file
     generate_search_index if @options.search_index
+    generate_gzipped_search_index if @options.search_index_gzipped
   end
 
   def class_dir
@@ -365,6 +367,18 @@ class RDoc::Generator::SDoc
     outfile      = @outputdir + 'panel/links.html'
 
     self.render_template( templatefile, binding(), outfile ) unless @options.dry_run
+  end
+
+  ### Compress the search_index.js file using gzip
+  def generate_gzipped_search_index
+    debug_msg "Compressing generated search engine index file"
+    search_index_file = @outputdir + 'js/search_index.js'
+    outfile           = @outputdir + 'js/search_index.js.gz'
+
+    require 'zlib'
+    Zlib::GzipWriter.open(outfile) do |gz|
+      gz.write File.read(search_index_file)
+    end
   end
 
   ### Copy all the resource files to output dir
