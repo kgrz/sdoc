@@ -372,8 +372,8 @@ class RDoc::Generator::SDoc
   ### Compress the search_index.js file using gzip
   def generate_gzipped_search_index
     debug_msg "Compressing generated search engine index file"
-    search_index_file = @outputdir + 'js/search_index.js'
-    outfile           = @outputdir + 'js/search_index.js.gz'
+    search_index_file = @outputdir + SEARCH_INDEX_FILE
+    outfile           = search_index_file + '.gz'
 
     require 'zlib'
     Zlib::GzipWriter.open(outfile) do |gz|
